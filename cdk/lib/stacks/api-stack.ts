@@ -31,5 +31,11 @@ export class ApiStack extends cdk.Stack {
 
     const items = api.root.addResource("items");
     items.addMethod("GET", new apigw.LambdaIntegration(handler));
+    items.addMethod("POST", new apigw.LambdaIntegration(handler));
+
+    const item = items.addResource("{id}");
+    item.addMethod("GET", new apigw.LambdaIntegration(handler));
+    item.addMethod("PUT", new apigw.LambdaIntegration(handler));
+    item.addMethod("DELETE", new apigw.LambdaIntegration(handler));
   }
 }
