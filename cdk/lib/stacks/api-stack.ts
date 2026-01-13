@@ -2,27 +2,16 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const handler = new lambda.Function(this, "ItemsHandler", {
+    const handler = new NodejsFunction(this, "ItemsHandler", {
       runtime: lambda.Runtime.NODEJS_18_X,
-      handler: "index.handler",
-      code: lambda.Code.fromInline(`
-        exports.handler = async function(event) {
-          return {
-            statusCode: 200,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message: "Kids School Tracker API is live",
-              path: event.path,
-              method: event.httpMethod
-            })
-          };
-        };
-      `),
+      entry: "lambda/items-handler/index.ts",
+      handler: "proxyHandler",
     });
 
     const api = new apigw.RestApi(this, "SchoolTrackerApi", {
