@@ -4,24 +4,22 @@ import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 
 export interface ApiStackProps extends cdk.StackProps {
   userPool: cognito.IUserPool;
+  table: dynamodb.ITable;
 }
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: ApiStackProps) {
     super(scope, id, props);
 
-    const handler = new NodejsFunction(this, "ItemsHandler", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      entry: "lambda/items-handler/index.ts",
-      handler: "proxyHandler",
-    });
-
     const api = new apigw.RestApi(this, "SchoolTrackerApi", {
       restApiName: "kids-school-tracker-api",
     });
+    const schoolItems = api.root.addResource("school-items");
+    const schoolItem = schoolItems.addResource("{id}");
 
     const authorizer = new apigw.CognitoUserPoolsAuthorizer(
       this,
@@ -31,28 +29,83 @@ export class ApiStack extends cdk.Stack {
       }
     );
 
-    const items = api.root.addResource("items");
-    items.addMethod("GET", new apigw.LambdaIntegration(handler), {
-      authorizer,
-      authorizationType: apigw.AuthorizationType.COGNITO,
+    const kidsSchoolTrackerTable = props!.table;
+
+    const getSchoolItems = new NodejsFunction(this, "GetSchoolItemsHandler", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: "lambdas/get-school-items/index.ts",
+      environment: {
+        TABLE_NAME: kidsSchoolTrackerTable.tableName,
+      },
     });
-    items.addMethod("POST", new apigw.LambdaIntegration(handler), {
+    kidsSchoolTrackerTable.grantReadData(getSchoolItems);
+    schoolItems.addMethod("GET", new apigw.LambdaIntegration(getSchoolItems), {
       authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO,
     });
 
-    const item = items.addResource("{id}");
-    item.addMethod("GET", new apigw.LambdaIntegration(handler), {
+    const addSchoolItems = new NodejsFunction(this, "AddSchoolItemsHandler", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: "lambdas/add-school-items/index.ts",
+      environment: {
+        TABLE_NAME: kidsSchoolTrackerTable.tableName,
+      },
+    });
+    kidsSchoolTrackerTable.grantWriteData(addSchoolItems);
+    schoolItems.addMethod("POST", new apigw.LambdaIntegration(addSchoolItems), {
       authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO,
     });
-    item.addMethod("PUT", new apigw.LambdaIntegration(handler), {
+
+    const getSchoolItem = new NodejsFunction(this, "GetSchoolItemHandler", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: "lambdas/get-school-item/index.ts",
+      environment: {
+        TABLE_NAME: kidsSchoolTrackerTable.tableName,
+      },
+    });
+    kidsSchoolTrackerTable.grantReadData(getSchoolItem);
+    schoolItem.addMethod("GET", new apigw.LambdaIntegration(getSchoolItem), {
       authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO,
     });
-    item.addMethod("DELETE", new apigw.LambdaIntegration(handler), {
+
+    const updateSchoolItem = new NodejsFunction(
+      this,
+      "UpdateSchoolItemHandler",
+      {
+        runtime: lambda.Runtime.NODEJS_22_X,
+        entry: "lambdas/update-school-item/index.ts",
+        environment: {
+          TABLE_NAME: kidsSchoolTrackerTable.tableName,
+        },
+      }
+    );
+    kidsSchoolTrackerTable.grantWriteData(updateSchoolItem);
+    schoolItem.addMethod("PUT", new apigw.LambdaIntegration(updateSchoolItem), {
       authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO,
     });
+
+    const deleteSchoolItem = new NodejsFunction(
+      this,
+      "DeleteSchoolItemHandler",
+      {
+        runtime: lambda.Runtime.NODEJS_22_X,
+        entry: "lambdas/delete-school-item/index.ts",
+        environment: {
+          TABLE_NAME: kidsSchoolTrackerTable.tableName,
+        },
+      }
+    );
+    kidsSchoolTrackerTable.grantWriteData(deleteSchoolItem);
+    schoolItem.addMethod(
+      "DELETE",
+      new apigw.LambdaIntegration(deleteSchoolItem),
+      {
+        authorizer,
+        authorizationType: apigw.AuthorizationType.COGNITO,
+      }
+    );
   }
 }
