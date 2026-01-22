@@ -15,5 +15,5 @@ export default function App() {
     window.location.href = `${domain}/login?client_id=${clientId}&response_type=code&scope=openid&redirect_uri=${redirectUri}`;
   }, []);
 
-  return <h2 style={{ padding: 24 }}>Redirecting...</h2>;
+  return null;
 }

@@ -39,16 +39,5 @@ export default function AuthCallback() {
       });
   }, []);
 
-  return (
-    <div>
-      <button
-        onClick={() => {
-          localStorage.clear();
-          window.location.href = `${domain}/logout?client_id=${clientId}&logout_uri=http://localhost:5173/`;
-        }}
-      >
-        Go to Home
-      </button>
-    </div>
-  );
+  return null;
 }
