@@ -17,6 +17,17 @@ export class ApiStack extends cdk.Stack {
 
     const api = new apigw.RestApi(this, "SchoolTrackerApi", {
       restApiName: "kids-school-tracker-api",
+      defaultCorsPreflightOptions: {
+        allowOrigins: ["http://localhost:5173"],
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowHeaders: [
+          "Content-Type",
+          "Authorization",
+          "X-Amz-Date",
+          "X-Api-Key",
+          "X-Amz-Security-Token",
+        ],
+      },
     });
     const schoolItems = api.root.addResource("school-items");
     const schoolItem = schoolItems.addResource("{id}");

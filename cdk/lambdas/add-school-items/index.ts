@@ -1,19 +1,13 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import crypto from "node:crypto";
+import { json } from "../../utils/helpers";
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const TABLE_NAME = process.env.TABLE_NAME!;
 
-const json = (statusCode: number, body: any) => ({
-  statusCode,
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(body),
-});
-
 export const handler = async (event: any) => {
   try {
-    // Auth: read user id from Cognito claims
     const claims = event.requestContext?.authorizer?.claims;
     const sub = claims?.sub;
     if (!sub) return json(401, { message: "Unauthorized" });
@@ -21,7 +15,7 @@ export const handler = async (event: any) => {
     const body = event.body ? JSON.parse(event.body) : {};
     if (!body) return json(400, { message: "Missing body" });
 
-    const userId = `USER-${sub}`;
+    const userId = `USER#${sub}`;
     const unique = crypto.randomUUID().slice(0, 8);
     const kid = (body.kidName ?? "NA").toString().trim();
     const kidId = `${kid}-${unique}`;

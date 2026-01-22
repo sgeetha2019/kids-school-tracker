@@ -24,14 +24,27 @@ export class AuthStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
+    this.userPool.addDomain("SchoolTrackerDomain", {
+      cognitoDomain: {
+        domainPrefix: "kids-school-event-tracker-" + this.account,
+      },
+    });
+
     this.userPoolClient = this.userPool.addClient(
       "SchoolTrackerUserPoolClient",
       {
         userPoolClientName: "kids-school-tracker-user-pool-client",
+        generateSecret: false,
+
         authFlows: {
           userPassword: true,
         },
-        generateSecret: false,
+        oAuth: {
+          flows: { authorizationCodeGrant: true },
+          scopes: [cognito.OAuthScope.OPENID],
+          callbackUrls: ["http://localhost:5173/auth/callback"],
+          logoutUrls: ["http://localhost:5173/"],
+        },
       }
     );
 
