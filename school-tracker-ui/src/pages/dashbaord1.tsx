@@ -47,7 +47,7 @@ export default function Dashboard() {
 
   const authHeaders = useMemo(() => {
     if (!token) return null;
-    return { Authorization: `Bearer ${token}` };
+    return {};
   }, [token]);
 
   const loadItems = async () => {
