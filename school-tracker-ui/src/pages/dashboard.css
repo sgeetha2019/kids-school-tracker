@@ -1,6 +1,6 @@
-/* .app-container {
-     justify-content: space-between;
-} */
+
 .app-section {
+    display: grid;
+    gap: 20px;
     padding: 50px 200px;
 }

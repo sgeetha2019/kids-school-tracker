@@ -16,11 +16,11 @@ export type SchoolItem = {
 type Props = {
   items: SchoolItem[];
   loading: boolean;
-  //   onEdit: (item: SchoolItem) => void;
-  //   onDelete: (kidId: string) => void;
+  onEdit: (item: SchoolItem) => void;
+  onDelete: (kidId: string) => void;
 };
 
-function StatusPill({ status }: { status?: string }) {
+function Status({ status }: { status?: string }) {
   const cls =
     status === "DONE"
       ? "status status--done"
@@ -34,9 +34,9 @@ function StatusPill({ status }: { status?: string }) {
 export default function ItemsTable({
   items,
   loading,
-}: //   onEdit,
-//   onDelete,
-Props) {
+  onDelete,
+  onEdit,
+}: Props) {
   return (
     <section className="itemsCard">
       {loading ? (
@@ -69,8 +69,7 @@ Props) {
                   <td>{item.title ?? "-"}</td>
 
                   <td>
-                    <StatusPill status={item.status} />
-                    {/* {item.status} */}
+                    <Status status={item.status} />
                   </td>
 
                   <td>{item.dueDate ?? "-"}</td>
@@ -80,7 +79,7 @@ Props) {
                       <button
                         type="button"
                         className="btn btn--secondary"
-                        // onClick={() => onEdit(item)}
+                        onClick={() => onEdit(item)}
                       >
                         Edit
                       </button>
@@ -88,7 +87,7 @@ Props) {
                       <button
                         type="button"
                         className="btn btn--danger"
-                        // onClick={() => onDelete(item.kidId)}
+                        onClick={() => onDelete(item.kidId)}
                       >
                         Delete
                       </button>

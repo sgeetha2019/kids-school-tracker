@@ -1,0 +1,48 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
+
+.modalCard {
+  width: min(760px, 100%);
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+.modalHeader {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modalSub {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+}
+
+.modalBody {
+  padding: 16px;
+}
