@@ -35,7 +35,7 @@ export default function EditItemModal({ open, item, onClose, onSave }: Props) {
     setKidName(item.kidName ?? "");
     setType(item.type ?? "homework");
     setStatus(item.status ?? "PENDING");
-    setDueDate(item.dueDate ?? item.date ?? "");
+    setDueDate(item.dueDate ?? "");
     setTitle(item.title ?? "");
     setNotes(item.notes ?? "");
     setError(null);

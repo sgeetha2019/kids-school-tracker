@@ -4,8 +4,7 @@ import "./dashboard.css";
 import ItemsTable from "../components/itemsTable";
 import AddItemForm from "../components/addItemForm";
 import EditItemModal from "../components/EditItemModal";
-
-const API_BASE = "https://fsrst17t9k.execute-api.eu-west-2.amazonaws.com/prod";
+import { apiBase } from "../auth/config";
 
 type SchoolItem = {
   userId: string;
@@ -13,7 +12,7 @@ type SchoolItem = {
   type?: string;
   kidName?: string;
   status?: string;
-  date?: string;
+  dueDate?: string;
   title?: string;
   notes?: string;
   createdAt?: string;
@@ -42,7 +41,7 @@ export default function Dashboard() {
     const token = getToken();
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE}/school-items`, {
+        const res = await fetch(`${apiBase}/school-items`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,7 +53,7 @@ export default function Dashboard() {
         if (!res.ok) {
           throw new Error(data?.message ?? "Failed to load items");
         }
-        const list = Array.isArray(data) ? data : data.items ?? [];
+        const list = Array.isArray(data) ? data : (data.items ?? []);
         setItems(list);
       } catch (e: any) {
         setError(e.message ?? "Unknown error");
@@ -69,7 +68,7 @@ export default function Dashboard() {
     const token = getToken();
     if (!token) throw new Error("Not logged in");
 
-    const res = await fetch(`${API_BASE}/school-items`, {
+    const res = await fetch(`${apiBase}/school-items`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +91,7 @@ export default function Dashboard() {
   const handleSaveEdit = async (kidId: string, patch: any) => {
     const token = getToken();
     const res = await fetch(
-      `${API_BASE}/school-items/${encodeURIComponent(kidId)}`,
+      `${apiBase}/school-items/${encodeURIComponent(kidId)}`,
       {
         method: "PUT",
         headers: {
@@ -100,7 +99,7 @@ export default function Dashboard() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(patch),
-      }
+      },
     );
     console.log("Response from update:", res);
     const updatedData = await res.json().catch(() => ({}));
@@ -108,8 +107,8 @@ export default function Dashboard() {
 
     setItems((prev) =>
       prev.map((item) =>
-        item.kidId === kidId ? { ...item, ...updatedData } : item
-      )
+        item.kidId === kidId ? { ...item, ...updatedData } : item,
+      ),
     );
   };
 
@@ -121,13 +120,13 @@ export default function Dashboard() {
 
     try {
       const res = await fetch(
-        `${API_BASE}/school-items/${encodeURIComponent(kidId)}`,
+        `${apiBase}/school-items/${encodeURIComponent(kidId)}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await res.json().catch(() => ({}));
@@ -137,7 +136,7 @@ export default function Dashboard() {
       }
 
       setItems((prev) =>
-        prev.filter((schoolItems) => schoolItems.kidId !== kidId)
+        prev.filter((schoolItems) => schoolItems.kidId !== kidId),
       );
     } catch (e: any) {
       setError(e.message ?? "Unknown error");

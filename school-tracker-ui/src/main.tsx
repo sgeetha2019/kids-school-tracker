@@ -5,7 +5,7 @@ import App from "./App.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/dashboard.tsx";
 import AuthCallback from "./pages/authCallback.tsx";
-import Logout from "./components/logOut.tsx";
+import Logout from "./components/logout";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
