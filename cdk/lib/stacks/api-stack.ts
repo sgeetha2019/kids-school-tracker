@@ -18,7 +18,10 @@ export class ApiStack extends cdk.Stack {
     const api = new apigw.RestApi(this, "SchoolTrackerApi", {
       restApiName: "kids-school-tracker-api",
       defaultCorsPreflightOptions: {
-        allowOrigins: ["http://localhost:5173"],
+        allowOrigins: [
+          "http://localhost:5173",
+          "https://dlafrpbhnmjpp.cloudfront.net",
+        ],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: [
           "Content-Type",
@@ -37,7 +40,7 @@ export class ApiStack extends cdk.Stack {
       "SchoolTrackerAuthorizer",
       {
         cognitoUserPools: [props!.userPool],
-      }
+      },
     );
 
     const kidsSchoolTrackerTable = props!.table;
@@ -90,7 +93,7 @@ export class ApiStack extends cdk.Stack {
         environment: {
           TABLE_NAME: kidsSchoolTrackerTable.tableName,
         },
-      }
+      },
     );
     kidsSchoolTrackerTable.grantWriteData(updateSchoolItem);
     schoolItem.addMethod("PUT", new apigw.LambdaIntegration(updateSchoolItem), {
@@ -107,7 +110,7 @@ export class ApiStack extends cdk.Stack {
         environment: {
           TABLE_NAME: kidsSchoolTrackerTable.tableName,
         },
-      }
+      },
     );
     kidsSchoolTrackerTable.grantWriteData(deleteSchoolItem);
     schoolItem.addMethod(
@@ -116,7 +119,7 @@ export class ApiStack extends cdk.Stack {
       {
         authorizer,
         authorizationType: apigw.AuthorizationType.COGNITO,
-      }
+      },
     );
   }
 }

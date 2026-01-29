@@ -11,7 +11,8 @@ export class AuthStack extends Stack {
 
     this.userPool = new cognito.UserPool(this, "SchoolTrackerUserPool", {
       userPoolName: "kids-school-tracker-user-pool",
-      selfSignUpEnabled: false,
+      selfSignUpEnabled: true,
+      autoVerify: { email: true },
       signInAliases: { email: true },
       accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
       passwordPolicy: {
@@ -42,10 +43,16 @@ export class AuthStack extends Stack {
         oAuth: {
           flows: { authorizationCodeGrant: true },
           scopes: [cognito.OAuthScope.OPENID],
-          callbackUrls: ["http://localhost:5173/auth/callback"],
-          logoutUrls: ["http://localhost:5173/"],
+          callbackUrls: [
+            "http://localhost:5173/auth/callback",
+            "https://dlafrpbhnmjpp.cloudfront.net/auth/callback",
+          ],
+          logoutUrls: [
+            "http://localhost:5173/",
+            "https://dlafrpbhnmjpp.cloudfront.net/",
+          ],
         },
-      }
+      },
     );
 
     new CfnOutput(this, "UserPoolId", { value: this.userPool.userPoolId });

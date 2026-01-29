@@ -1,17 +1,17 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { json } from "../../utils/helpers";
+import { getSub, json } from "../../utils/helpers";
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const TABLE_NAME = process.env.TABLE_NAME!;
 
-const ALLOWED_FIELDS = ["status", "date", "notes"] as const;
+const ALLOWED_FIELDS = ["status", "dueDate", "notes"] as const;
 
 export const handler = async (event: any) => {
   try {
-    const claims = event.requestContext?.authorizer?.claims;
-    const sub = claims?.sub;
-    if (!sub) return json(401, { message: "Unauthorized" });
+    const sub = getSub(event);
+
+    if (!sub) return json(event, 401, { message: "Unauthorized" });
 
     const body = event.body ? JSON.parse(event.body) : {};
 
@@ -45,16 +45,16 @@ export const handler = async (event: any) => {
         ConditionExpression:
           "attribute_exists(userId) AND attribute_exists(kidId)",
         ReturnValues: "ALL_NEW",
-      })
+      }),
     );
 
-    return json(200, result.Attributes);
+    return json(event, 200, result.Attributes);
   } catch (err: any) {
     if (err?.name === "ConditionalCheckFailedException") {
-      return json(404, { message: "Not found" });
+      return json(event, 404, { message: "Not found" });
     }
     console.error(err);
-    return json(500, {
+    return json(event, 500, {
       message: "Server error",
       error: err?.message ?? "Unknown error",
     });

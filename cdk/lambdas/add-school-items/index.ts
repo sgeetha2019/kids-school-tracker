@@ -1,19 +1,18 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import crypto from "node:crypto";
-import { json } from "../../utils/helpers";
+import { getSub, json } from "../../utils/helpers";
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const TABLE_NAME = process.env.TABLE_NAME!;
 
 export const handler = async (event: any) => {
   try {
-    const claims = event.requestContext?.authorizer?.claims;
-    const sub = claims?.sub;
-    if (!sub) return json(401, { message: "Unauthorized" });
+    const sub = getSub(event);
+    if (!sub) return json(event, 401, { message: "Unauthorized" });
 
     const body = event.body ? JSON.parse(event.body) : {};
-    if (!body) return json(400, { message: "Missing body" });
+    if (!body) return json(event, 400, { message: "Missing body" });
 
     const userId = `USER#${sub}`;
     const unique = crypto.randomUUID().slice(0, 8);
@@ -40,13 +39,13 @@ export const handler = async (event: any) => {
       new PutCommand({
         TableName: TABLE_NAME,
         Item: item,
-      })
+      }),
     );
 
-    return json(201, item);
+    return json(event, 201, item);
   } catch (err: any) {
     console.error(err);
-    return json(500, {
+    return json(event, 500, {
       message: "Server error",
       error: err?.message ?? "Unknown error",
     });

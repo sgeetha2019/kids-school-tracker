@@ -3,6 +3,7 @@ import * as cdk from "aws-cdk-lib";
 import { ApiStack } from "../lib/stacks/api-stack";
 import { AuthStack } from "../lib/stacks/auth-stack";
 import { DataStack } from "../lib/stacks/data-stack";
+import { WebAppStack } from "../lib/stacks/web-app-stack";
 
 const app = new cdk.App();
 
@@ -19,3 +20,5 @@ new ApiStack(app, "ApiStack", {
   userPool: authStack.userPool,
   table: dataStack.table,
 });
+
+new WebAppStack(app, "WebAppStack", { env });

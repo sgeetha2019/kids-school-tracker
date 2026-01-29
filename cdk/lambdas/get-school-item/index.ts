@@ -1,16 +1,15 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { json } from "../../utils/helpers";
+import { getSub, json } from "../../utils/helpers";
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 const TABLE_NAME = process.env.TABLE_NAME!;
 export const handler = async (event: any) => {
-  const claims = event.requestContext?.authorizer?.claims;
-  const sub = claims?.sub;
+  const sub = getSub(event);
 
   if (!sub) {
-    return json(401, { message: "Unauthorized" });
+    return json(event, 401, { message: "Unauthorized" });
   }
 
   const userId = `USER#${sub}`;
@@ -20,9 +19,9 @@ export const handler = async (event: any) => {
     new GetCommand({
       TableName: TABLE_NAME,
       Key: { userId, kidId: id },
-    })
+    }),
   );
-  if (!result.Item) return json(404, { message: "Not found" });
+  if (!result.Item) return json(event, 404, { message: "Not found" });
 
-  return json(200, result.Item);
+  return json(event, 200, result.Item);
 };

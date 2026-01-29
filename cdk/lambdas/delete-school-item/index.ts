@@ -1,17 +1,16 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { json } from "../../utils/helpers";
+import { getSub, json } from "../../utils/helpers";
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 const TABLE_NAME = process.env.TABLE_NAME!;
 
 export const handler = async (event: any) => {
-  const claims = event.requestContext?.authorizer?.claims;
-  const sub = claims?.sub;
+  const sub = getSub(event);
 
   if (!sub) {
-    return json(401, { message: "Unauthorized" });
+    return json(event, 401, { message: "Unauthorized" });
   }
 
   const userId = `USER#${sub}`;
@@ -21,7 +20,7 @@ export const handler = async (event: any) => {
     new DeleteCommand({
       TableName: TABLE_NAME,
       Key: { userId, kidId: id },
-    })
+    }),
   );
-  return json(200, { message: "Deleted", id });
+  return json(event, 200, { message: "Deleted", id });
 };
