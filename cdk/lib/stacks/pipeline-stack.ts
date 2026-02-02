@@ -19,9 +19,7 @@ export class PipelineStack extends cdk.Stack {
       pipelineName: "kids-school-tracker-pipeline",
 
       synth: new pipelines.ShellStep("Synth", {
-        input: pipelines.CodePipelineSource.connection(repo, branch, {
-          connectionArn,
-        }),
+        input: pipelines.CodePipelineSource.gitHub(repo, branch),
         commands: [
           // UI build steps
           "cd school-tracker-ui",
