@@ -9,7 +9,12 @@ export class PipelineStack extends cdk.Stack {
 
     const repo = "sgeetha2019/kids-school-tracker";
     const branch = "main";
-    const connectionArn = process.env.GITHUB_CONNECTION_ARN!;
+    const connectionArn = process.env.GITHUB_CONNECTION_ARN;
+    if (!connectionArn) {
+      throw new Error(
+        "Missing GITHUB_CONNECTION_ARN. Set it before running CDK, e.g. export GITHUB_CONNECTION_ARN='arn:...'",
+      );
+    }
     const pipeline = new pipelines.CodePipeline(this, "Pipeline", {
       pipelineName: "kids-school-tracker-pipeline",
 
