@@ -3,8 +3,8 @@ import Header from "../components/header";
 import "./dashboard.css";
 import ItemsTable from "../components/itemsTable";
 import AddItemForm from "../components/addItemForm";
-import EditItemModal from "../components/EditItemModal";
 import { apiBase } from "../auth/config";
+import EditItemModal from "../components/editItemModal";
 
 type SchoolItem = {
   userId: string;

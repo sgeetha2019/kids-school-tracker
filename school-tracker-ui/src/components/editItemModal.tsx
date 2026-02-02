@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { SchoolItem } from "./itemsTable";
 import "./editItemModal.css";
-
 type PatchPayload = {
   kidName?: string;
   type?: string;
