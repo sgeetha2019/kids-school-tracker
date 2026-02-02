@@ -5,7 +5,7 @@ import { getSub, json } from "../../utils/helpers";
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const TABLE_NAME = process.env.TABLE_NAME!;
 
-const ALLOWED_FIELDS = ["status", "dueDate", "notes"] as const;
+const ALLOWED_FIELDS = ["type", "title", "status", "dueDate", "notes"] as const;
 
 export const handler = async (event: any) => {
   try {

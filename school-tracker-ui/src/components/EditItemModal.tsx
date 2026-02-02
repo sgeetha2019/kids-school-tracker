@@ -101,9 +101,9 @@ export default function EditItemModal({ open, item, onClose, onSave }: Props) {
             <div className="field">
               <label className="field__label">Kid name *</label>
               <input
-                className="field__input"
+                className="field__input field__input--readonly"
                 value={kidName}
-                onChange={(e) => setKidName(e.target.value)}
+                readOnly
               />
             </div>
 

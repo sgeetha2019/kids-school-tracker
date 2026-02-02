@@ -1,4 +1,4 @@
-import "./itemsTables.css";
+import "./itemsTable.css";
 export type SchoolItem = {
   userId: string;
   kidId: string;
@@ -25,8 +25,8 @@ function Status({ status }: { status?: string }) {
     status === "DONE"
       ? "status status--done"
       : status === "PENDING"
-      ? "status status--pending"
-      : "status status--other";
+        ? "status status--pending"
+        : "status status--other";
 
   return <span className={cls}>{status}</span>;
 }

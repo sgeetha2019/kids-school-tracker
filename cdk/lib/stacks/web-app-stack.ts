@@ -18,9 +18,9 @@ export class WebAppStack extends cdk.Stack {
         bucketName: "kids-school-tracker-ui",
         blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
         encryption: s3.BucketEncryption.S3_MANAGED,
-        removalPolicy: cdk.RemovalPolicy.DESTROY,
-        autoDeleteObjects: true,
-      }
+        removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT for production use. WHEN using in production, set to RETAIN
+        autoDeleteObjects: true, // NOT for production use. WHEN using in production, set to false
+      },
     );
 
     // 2) CloudFront distribution (HTTPS public URL)
@@ -33,7 +33,6 @@ export class WebAppStack extends cdk.Stack {
           origin: new origins.S3Origin(kidsSchoolTrackerBucket),
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         },
 
         errorResponses: [
@@ -50,7 +49,7 @@ export class WebAppStack extends cdk.Stack {
             ttl: cdk.Duration.seconds(0),
           },
         ],
-      }
+      },
     );
 
     new s3deploy.BucketDeployment(this, "DeploySchoolTrackerUi", {
