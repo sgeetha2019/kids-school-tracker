@@ -2,7 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as pipelines from "aws-cdk-lib/pipelines";
 import { SchoolTrackerStage } from "./school-tracker-stage";
-
+import * as codebuild from "aws-cdk-lib/aws-codebuild";
 export class PipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -14,14 +14,16 @@ export class PipelineStack extends cdk.Stack {
 
     const pipeline = new pipelines.CodePipeline(this, "Pipeline", {
       pipelineName: "kids-school-tracker-pipeline",
-
+      codeBuildDefaults: {
+        buildEnvironment: {
+          buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
+        },
+      },
       synth: new pipelines.ShellStep("Synth", {
         input: pipelines.CodePipelineSource.connection(repo, branch, {
           connectionArn,
         }),
-        env: {
-          GITHUB_CONNECTION_ARN: connectionArn,
-        },
+        installCommands: ["n 20", "node -v"],
         commands: [
           // UI build steps
           "cd school-tracker-ui",
