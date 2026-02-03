@@ -34,7 +34,7 @@ export class PipelineStack extends cdk.Stack {
           // CDK synth steps
           "cd cdk",
           "npm ci",
-          "npx cdk synth",
+          "npx cdk synth -o ../cdk.out",
         ],
         primaryOutputDirectory: "cdk/cdk.out",
       }),
