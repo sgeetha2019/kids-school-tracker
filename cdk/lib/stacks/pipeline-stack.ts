@@ -23,17 +23,24 @@ export class PipelineStack extends cdk.Stack {
         input: pipelines.CodePipelineSource.connection(repo, branch, {
           connectionArn,
         }),
-        installCommands: ["n 20", "node -v"],
+        installCommands: [
+          "npm install -g n",
+          "n 20",
+          "node -v",
+          // global CDK CLI aligned with your aws-cdk-lib
+          "npm install -g aws-cdk@2.232.2",
+          "cdk --version",
+        ],
         commands: [
-          // Build React app
+          // React UI
           "npm ci --prefix school-tracker-ui",
           "npm run build --prefix school-tracker-ui",
 
-          // Build & synth CDK
-          "cd cdk && npm ci",
-          "cd cdk && npx cdk synth",
+          // CDK: install and synth (single shell)
+          "bash -lc 'set -euo pipefail; cd cdk; pwd; ls -la; npm ci; cdk synth'",
+          // If your cdk.json targets compiled JS:
+          // "bash -lc 'set -euo pipefail; cd cdk; npm ci; npm run build; cdk synth'"
         ],
-
         primaryOutputDirectory: "cdk/cdk.out",
       }),
     });
