@@ -25,17 +25,16 @@ export class PipelineStack extends cdk.Stack {
         }),
         installCommands: ["n 20", "node -v"],
         commands: [
-          // UI build steps
-          "cd school-tracker-ui",
-          "npm ci",
-          "npm run build",
-          "cd ..",
+          // Build React app
+          "npm ci --prefix school-tracker-ui",
+          "npm run build --prefix school-tracker-ui",
 
-          // CDK synth steps
-          "cd cdk",
-          "npm ci",
-          "npx cdk synth",
+          // Build & synth CDK
+          "cd cdk && npm ci",
+          "cd cdk && npx cdk synth",
         ],
+
+        primaryOutputDirectory: "cdk/cdk.out",
       }),
     });
 
