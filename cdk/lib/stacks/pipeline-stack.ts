@@ -14,11 +14,6 @@ export class PipelineStack extends cdk.Stack {
 
     const pipeline = new pipelines.CodePipeline(this, "Pipeline", {
       pipelineName: "kids-school-tracker-pipeline",
-      codeBuildDefaults: {
-        buildEnvironment: {
-          buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
-        },
-      },
       synth: new pipelines.ShellStep("Synth", {
         input: pipelines.CodePipelineSource.connection(repo, branch, {
           connectionArn,
