@@ -9,8 +9,7 @@ export class PipelineStack extends cdk.Stack {
 
     const repo = "sgeetha2019/kids-school-tracker";
     const branch = "main";
-    const connectionArn =
-      "arn:aws:codeconnections:eu-west-2:194442925705:connection/c827f9dc-bdeb-4210-a2e2-6d97446eb7da";
+    const connectionArn = process.env.GITHUB_CONNECTION_ARN!;
 
     const pipeline = new pipelines.CodePipeline(this, "Pipeline", {
       pipelineName: "kids-school-tracker-pipeline",
