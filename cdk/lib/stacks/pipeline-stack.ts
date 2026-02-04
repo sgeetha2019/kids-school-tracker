@@ -23,30 +23,21 @@ export class PipelineStack extends cdk.Stack {
         input: pipelines.CodePipelineSource.connection(repo, branch, {
           connectionArn,
         }),
-        installCommands: [
-          // Use existing 'n' if present; otherwise install
-          "bash -lc 'set -e; command -v n >/dev/null 2>&1 || npm install --location=global n'",
-          // Switch to Node 20 (idempotent if already on 20)
-          "n 20 || true",
-          "node -v",
-          // Install global CDK CLI (match your aws-cdk-lib range); guard if already present
-          "bash -lc 'set -e; if ! command -v cdk >/dev/null 2>&1; then npm install --location=global aws-cdk@2.232.2 --no-fund --no-audit; fi'",
-          "cdk --version",
-        ],
+        installCommands: ["n 20", "node -v"],
         commands: [
-          // Build React app
-          "npm ci --prefix school-tracker-ui",
-          "npm run build --prefix school-tracker-ui",
+          // UI build steps
+          "cd school-tracker-ui",
+          "npm ci",
+          "npm run build",
+          "cd ..",
 
-          // CDK: absolute path + single shell + diagnostics
-          "bash -lc 'set -euo pipefail; " +
-            'echo ROOT=$CODEBUILD_SRC_DIR; ls -la "$CODEBUILD_SRC_DIR"; ' +
-            'cd "$CODEBUILD_SRC_DIR"/cdk; pwd; ls -la; ' +
-            "npm ci; " +
-            // If /cdk/cdk.json uses ts-node (recommended):
-            "cdk synth" +
-            // If your cdk.json targets compiled JS, use: npm run build; cdk synth
-            "'",
+          // CDK synth steps
+          "cd cdk",
+          "npm ci",
+          "npx cdk synth",
+          "cd ..",
+          "ls -la cdk",
+          "ls -la cdk/cdk.out",
         ],
         primaryOutputDirectory: "cdk/cdk.out",
       }),
