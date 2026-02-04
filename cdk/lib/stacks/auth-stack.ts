@@ -45,11 +45,11 @@ export class AuthStack extends Stack {
           scopes: [cognito.OAuthScope.OPENID],
           callbackUrls: [
             "http://localhost:5173/auth/callback",
-            "https://dlafrpbhnmjpp.cloudfront.net/auth/callback",
+            "https://dg89suy4gt5zb.cloudfront.net/auth/callback",
           ],
           logoutUrls: [
             "http://localhost:5173/",
-            "https://dlafrpbhnmjpp.cloudfront.net/",
+            "https://dg89suy4gt5zb.cloudfront.net/",
           ],
         },
       },

@@ -20,7 +20,7 @@ export class ApiStack extends cdk.Stack {
       defaultCorsPreflightOptions: {
         allowOrigins: [
           "http://localhost:5173",
-          "https://dlafrpbhnmjpp.cloudfront.net",
+          "https://dg89suy4gt5zb.cloudfront.net",
         ],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: [
