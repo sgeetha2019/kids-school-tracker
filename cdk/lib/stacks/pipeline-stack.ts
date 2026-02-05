@@ -18,7 +18,6 @@ export class PipelineStack extends cdk.Stack {
         input: pipelines.CodePipelineSource.connection(repo, branch, {
           connectionArn,
         }),
-        installCommands: ["n 20", "node -v"],
         commands: [
           // UI build steps
           "cd school-tracker-ui",
